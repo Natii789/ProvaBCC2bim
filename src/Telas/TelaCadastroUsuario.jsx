@@ -1,23 +1,26 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useContext } from "react";
+import { ContextoUsuario } from "../../App";
 
-export default function TelaCadastroUsuario({ setUsuarios }) {
-  const [nickname, setNickname] = useState("");
-  const [senha, setSenha] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const navigate = useNavigate();
+export default function TelaCadastroUsuario() {
+  const { setUsuario } = useContext(ContextoUsuario); 
+  const [nickname, setNickname] = useState(""); 
+  const [senha, setSenha] = useState(""); 
+  const [usuarios, setUsuarios] = useState([]); 
 
   const handleCadastro = () => {
-    if (nickname && senha && avatar) {
-      setUsuarios((prevUsuarios) => [
-        ...prevUsuarios,
-        { nickname, senha, avatar },
-      ]);
-      alert("Cadastro realizado com sucesso!");
-      navigate("/login");  
-    } else {
+    if (!nickname || !senha) {
       alert("Por favor, preencha todos os campos.");
+      return;
     }
+
+    if (usuarios.some((usuario) => usuario.nickname === nickname)) {
+      alert("Este nickname já está registrado.");
+      return;
+    }
+
+    setUsuarios([...usuarios, { nickname, senha }]);
+    setUsuario({ nickname, senha, logado: true });
+    alert("Usuário cadastrado com sucesso!");
   };
 
   return (
@@ -34,12 +37,6 @@ export default function TelaCadastroUsuario({ setUsuarios }) {
         placeholder="Senha"
         value={senha}
         onChange={(e) => setSenha(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="URL do Avatar"
-        value={avatar}
-        onChange={(e) => setAvatar(e.target.value)}
       />
       <button onClick={handleCadastro}>Cadastrar</button>
     </div>

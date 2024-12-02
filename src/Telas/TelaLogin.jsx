@@ -2,23 +2,27 @@ import { useState, useContext } from "react";
 import { ContextoUsuario } from "../../App";
 import { useNavigate } from "react-router-dom";
 
-export default function TelaLogin({ usuarios }) {
-  const [nickname, setNickname] = useState("");
-  const [senha, setSenha] = useState("");
+export default function TelaLogin() {
   const { setUsuario } = useContext(ContextoUsuario);
+  const [nickname, setNickname] = useState(""); 
+  const [senha, setSenha] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    
-    const usuarioEncontrado = usuarios.find(
+    if (!nickname || !senha) {
+      alert("Por favor, preencha o nickname e a senha.");
+      return;
+    }
+
+    const usuario = usuarios.find(
       (user) => user.nickname === nickname && user.senha === senha
     );
 
-    if (usuarioEncontrado) {
-      setUsuario({ nickname: usuarioEncontrado.nickname, logado: true });
-      navigate("/batepapo"); 
+    if (usuario) {
+      setUsuario({ nickname, senha, logado: true });
+      navigate("/chat"); 
     } else {
-      alert("Nickname ou senha incorretos!");
+      alert("Credenciais inválidas.");
     }
   };
 
